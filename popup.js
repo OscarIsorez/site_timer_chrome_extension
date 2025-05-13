@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const rulesList = document.getElementById('rulesList');
     const addRuleButton = document.getElementById('addRuleButton'); // Get the button by its new ID
 
-    // Load and display rules on popup open
     await displayRules();
 
     ruleForm.addEventListener('submit', async (e) => {
@@ -111,32 +110,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     // as its content is minimal and functionality is covered/better placed in this primary listener.
 });
 
-// --- DEBUG FUNCTION --- //
-// To use: 
-// 1. Open the extension popup.
-// 2. Open the browser's developer console (usually F12), select the popup's context.
-// 3. Type `deleteAllRulesDebug()` in the console and press Enter.
-// OR: Uncomment the line below in `DOMContentLoaded` to run it on popup open.
-async function deleteAllRulesDebug() {
-    try {
-        await chrome.storage.sync.set({ rules: [] });
-        console.warn('DEBUG: All rules have been deleted from storage.');
-        // Attempt to refresh the displayed rules list if displayRules is available
-        if (document.getElementById('rulesList') && typeof displayRules === 'function') {
-            // This check might be tricky due to scope; displayRules is inside DOMContentLoaded
-            // A better way would be to make displayRules accessible globally or re-query.
-            // For simplicity, we'll just log here. A full refresh would require displayRules to be callable.
-            console.log("Rule list in UI may need manual refresh or reopen of popup.");
-        }
-    } catch (error) {
-        console.error("Error deleting all rules:", error);
-    }
-}
-
-// To clear all rules on popup open for debugging, you could call deleteAllRulesDebug()
-// at the beginning of the DOMContentLoaded callback, e.g.:
-// document.addEventListener('DOMContentLoaded', async () => {
-//     await deleteAllRulesDebug(); // Uncomment for debugging
-//     const ruleForm = document.getElementById('ruleForm');
-//     // ... rest of the code
-// });
