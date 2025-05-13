@@ -3,70 +3,112 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const ruleForm = document.getElementById('ruleForm');
     const rulesList = document.getElementById('rulesList');
-    // const startHourSelect = document.getElementById('start-hour'); // Not needed
-    // const startMinSelect = document.getElementById('start-min');   // Not needed
-    // const endHourSelect = document.getElementById('end-hour');     // Not needed
-    // const endMinSelect = document.getElementById('end-min');       // Not needed
-
-    // Function to populate select elements for time (REMOVED)
-    // function populateTimeSelects() { ... }
-
-    // populateTimeSelects(); // Call the function to populate time pickers (REMOVED)
+    const addRuleButton = document.getElementById('addRuleButton'); // Get the button by its new ID
 
     // Load and display rules on popup open
     await displayRules();
 
     ruleForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const url = document.getElementById('url').value.trim();
 
-        // Get custom time picker values and pad with leading zero if necessary
-        const startHour = document.getElementById('start-hour').value.padStart(2, '0');
-        const startMin = document.getElementById('start-min').value.padStart(2, '0');
-        const endHour = document.getElementById('end-hour').value.padStart(2, '0');
-        const endMin = document.getElementById('end-min').value.padStart(2, '0');
+        // Start animation
+        addRuleButton.classList.add('animating');
+        addRuleButton.disabled = true;
+
+        const urlInput = document.getElementById('url');
+        const startHourInput = document.getElementById('start-hour');
+        const startMinInput = document.getElementById('start-min');
+        const endHourInput = document.getElementById('end-hour');
+        const endMinInput = document.getElementById('end-min');
+
+        const url = urlInput.value.trim();
+        const startHourValue = startHourInput.value;
+        const startMinValue = startMinInput.value;
+        const endHourValue = endHourInput.value;
+        const endMinValue = endMinInput.value;
+
+        // Basic validation for empty fields
+        if (!url || !startHourValue || !startMinValue || !endHourValue || !endMinValue) {
+            // console.warn('All fields are required.'); // Optional: for debugging
+            // alert('Please fill in all fields.'); // Optional: user feedback
+            addRuleButton.classList.remove('animating'); // Revert button
+            addRuleButton.disabled = false;
+            return;
+        }
+
+        const startHour = startHourValue.padStart(2, '0');
+        const startMin = startMinValue.padStart(2, '0');
+        const endHour = endHourValue.padStart(2, '0');
+        const endMin = endMinValue.padStart(2, '0');
 
         const start = `${startHour}:${startMin}`;
         const end = `${endHour}:${endMin}`;
 
-        // Basic validation for time values (optional, but good practice)
-        if (!url || !startHour || !startMin || !endHour || !endMin) {
-            console.error("All fields including time must be filled.");
-            return; // Or show a user-friendly error
-        }
+        // Detailed time validation (ensure numbers are within valid ranges)
         if (parseInt(startHour) < 0 || parseInt(startHour) > 23 ||
             parseInt(startMin) < 0 || parseInt(startMin) > 59 ||
             parseInt(endHour) < 0 || parseInt(endHour) > 23 ||
             parseInt(endMin) < 0 || parseInt(endMin) > 59) {
-            console.error("Invalid time value entered.");
-            return; // Or show a user-friendly error
+            // console.warn('Invalid time value entered.'); // Optional: for debugging
+            // alert('Invalid time range. Please check HH (0-23) and MM (0-59).'); // Optional: user feedback
+            addRuleButton.classList.remove('animating'); // Revert button
+            addRuleButton.disabled = false;
+            return;
         }
 
-        const { rules = [] } = await chrome.storage.sync.get('rules');
-        rules.push({ url, start, end });
-        await chrome.storage.sync.set({ rules });
-        ruleForm.reset();
-        await displayRules();
+        const newRule = { url, start, end, id: Date.now().toString() }; // Added unique ID
+
+        try {
+            const data = await chrome.storage.sync.get('rules');
+            const rules = data.rules || [];
+            rules.push(newRule);
+            await chrome.storage.sync.set({ rules });
+
+            ruleForm.reset();
+            await displayRules();
+
+            // Animation complete - revert button after a delay
+            // The delay should be longer than the CSS animation/transition duration
+            setTimeout(() => {
+                addRuleButton.classList.remove('animating');
+                addRuleButton.disabled = false;
+            }, 800); // e.g., 400ms for button shape + 200ms for icon fade + buffer
+        } catch (error) {
+            console.error("Error saving rule:", error);
+            // alert('Failed to save rule. See console for details.'); // Optional: user feedback
+            addRuleButton.classList.remove('animating'); // Revert button on error
+            addRuleButton.disabled = false;
+        }
     });
 
     async function displayRules() {
-        const { rules = [] } = await chrome.storage.sync.get('rules');
-        rulesList.innerHTML = '';
-        if (rules.length === 0) {
-            rulesList.innerHTML = '<li style="color: #888;">Aucune règle définie.</li>';
-            return;
+        rulesList.innerHTML = ''; // Clear existing rules
+        try {
+            const data = await chrome.storage.sync.get('rules');
+            const rules = data.rules || [];
+            rules.forEach(rule => {
+                const li = document.createElement('li');
+                li.className = 'rule-item'; // Assuming you have styles for .rule-item
+
+                const urlSpan = document.createElement('span');
+                urlSpan.className = 'rule-url';
+                urlSpan.textContent = rule.url;
+
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'rule-time';
+                timeSpan.textContent = ` (${rule.start} - ${rule.end})`;
+
+                li.appendChild(urlSpan);
+                li.appendChild(timeSpan);
+                rulesList.appendChild(li);
+            });
+        } catch (error) {
+            console.error("Error displaying rules:", error);
         }
-        rules.forEach((rule, idx) => {
-            const li = document.createElement('li');
-            li.className = 'rule-item';
-            li.innerHTML = `
-        <span class="rule-url">${rule.url}</span>
-        <span class="rule-time">${rule.start} - ${rule.end}</span>
-      `;
-            rulesList.appendChild(li);
-        });
-        ;
     }
+    // Ensure deleteAllRulesDebug is defined if called, or handle its definition
+    // The second DOMContentLoaded listener from the original file is not included here
+    // as its content is minimal and functionality is covered/better placed in this primary listener.
 });
 
 // --- DEBUG FUNCTION --- //
@@ -76,80 +118,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 3. Type `deleteAllRulesDebug()` in the console and press Enter.
 // OR: Uncomment the line below in `DOMContentLoaded` to run it on popup open.
 async function deleteAllRulesDebug() {
-    await chrome.storage.sync.set({ rules: [] });
-    console.warn('DEBUG: All rules have been deleted from storage.');
-    // We need to access displayRules, ensure it's available or pass it if needed
-    // For simplicity, assuming displayRules is accessible in the global scope of the popup
-    // or that this function is defined where displayRules is in scope.
-    if (typeof displayRules === 'function') {
-        await displayRules();
-    } else {
-        // If displayRules is not directly accessible, you might need to reload the popup
-        // or call it in a way that it can be accessed from the global scope if popup.js is structured differently.
-        // For this setup, it should be fine as displayRules is in the same scope or accessible.
-        console.warn('displayRules function not found in this context, UI may not update immediately.');
+    try {
+        await chrome.storage.sync.set({ rules: [] });
+        console.warn('DEBUG: All rules have been deleted from storage.');
+        // Attempt to refresh the displayed rules list if displayRules is available
+        if (document.getElementById('rulesList') && typeof displayRules === 'function') {
+            // This check might be tricky due to scope; displayRules is inside DOMContentLoaded
+            // A better way would be to make displayRules accessible globally or re-query.
+            // For simplicity, we'll just log here. A full refresh would require displayRules to be callable.
+            console.log("Rule list in UI may need manual refresh or reopen of popup.");
+        }
+    } catch (error) {
+        console.error("Error deleting all rules:", error);
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const ruleForm = document.getElementById('ruleForm');
-    const rulesList = document.getElementById('rulesList');
-
-    // To clear all rules on popup open for debugging, uncomment the next line:
-    // await deleteAllRulesDebug();
-
-    // Load and display rules on popup open
-    await displayRules();
-
-    ruleForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const url = document.getElementById('url').value.trim();
-
-        // Get custom time picker values and pad with leading zero if necessary
-        const startHour = document.getElementById('start-hour').value.padStart(2, '0');
-        const startMin = document.getElementById('start-min').value.padStart(2, '0');
-        const endHour = document.getElementById('end-hour').value.padStart(2, '0');
-        const endMin = document.getElementById('end-min').value.padStart(2, '0');
-
-        const start = `${startHour}:${startMin}`;
-        const end = `${endHour}:${endMin}`;
-
-        // Basic validation for time values (optional, but good practice)
-        if (!url || !startHour || !startMin || !endHour || !endMin) {
-            console.error("All fields including time must be filled.");
-            return; // Or show a user-friendly error
-        }
-        if (parseInt(startHour) < 0 || parseInt(startHour) > 23 ||
-            parseInt(startMin) < 0 || parseInt(startMin) > 59 ||
-            parseInt(endHour) < 0 || parseInt(endHour) > 23 ||
-            parseInt(endMin) < 0 || parseInt(endMin) > 59) {
-            console.error("Invalid time value entered.");
-            return; // Or show a user-friendly error
-        }
-
-        const { rules = [] } = await chrome.storage.sync.get('rules');
-        rules.push({ url, start, end });
-        await chrome.storage.sync.set({ rules });
-        ruleForm.reset();
-        await displayRules();
-    });
-
-    async function displayRules() {
-        const { rules = [] } = await chrome.storage.sync.get('rules');
-        rulesList.innerHTML = '';
-        if (rules.length === 0) {
-            rulesList.innerHTML = '<li style="color: #888;">Aucune règle définie.</li>';
-            return;
-        }
-        rules.forEach((rule, idx) => {
-            const li = document.createElement('li');
-            li.className = 'rule-item';
-            li.innerHTML = `
-        <span class="rule-url">${rule.url}</span>
-        <span class="rule-time">${rule.start} - ${rule.end}</span>
-      `;
-            rulesList.appendChild(li);
-        });
-        ;
-    }
-});
+// To clear all rules on popup open for debugging, you could call deleteAllRulesDebug()
+// at the beginning of the DOMContentLoaded callback, e.g.:
+// document.addEventListener('DOMContentLoaded', async () => {
+//     await deleteAllRulesDebug(); // Uncomment for debugging
+//     const ruleForm = document.getElementById('ruleForm');
+//     // ... rest of the code
+// });

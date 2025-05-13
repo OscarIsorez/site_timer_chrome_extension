@@ -11,7 +11,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
 
   to {
@@ -101,13 +101,19 @@ button[type="submit"] {
   /* Slightly larger font */
   letter-spacing: 0.5px;
   /* Add some letter spacing */
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, letter-spacing 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, letter-spacing 0.3s ease, width 0.4s ease, height 0.4s ease, border-radius 0.4s ease, padding 0.4s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   /* Base shadow */
-  /* position: relative; */
-  /* Not needed for current effects but good for future pseudo-elements */
-  /* overflow: hidden; */
-  /* Not needed for current effects */
+  position: relative;
+  /* Needed for icon positioning */
+  overflow: hidden;
+  /* To hide the icon initially and during transition */
+  align-self: center;
+  /* ADDED to keep the button centered during width transition */
+  width: 100%;
+  /* ADDED: Make button full width */
+  box-sizing: border-box;
+  /* ADDED: Include padding and border in the element's total width and height */
 }
 
 button[type="submit"]:hover {
@@ -132,6 +138,51 @@ button[type="submit"]:active {
   /* Slightly tighter letter spacing on press */
   transition-duration: 0.1s;
   /* Make the press feel quicker */
+}
+
+.button-text {
+  display: inline-block;
+  transition: opacity 0.2s ease;
+}
+
+.button-icon {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  width: 24px;
+  /* Adjust size as needed */
+  height: 24px;
+  /* Adjust size as needed */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button[type="submit"].animating {
+  width: 50px;
+  /* Circle diameter - should roughly match original height + padding */
+  height: 50px;
+  /* Ensure this creates a circle with your padding */
+  border-radius: 50%;
+  padding: 0;
+  /* Remove padding to make it a true circle with icon centered */
+  letter-spacing: 0;
+  /* Prevent text from affecting size */
+}
+
+button[type="submit"].animating .button-text {
+  opacity: 0;
+}
+
+button[type="submit"].animating .button-icon {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  transition-delay: 0.2s;
 }
 
 #rulesList {
