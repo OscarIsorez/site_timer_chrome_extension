@@ -1,0 +1,207 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* Modern sans-serif */
+  width: 280px;
+  /* Slightly wider for better spacing */
+  padding: 15px;
+  background-color: #F0F5F0;
+  /* Light green/off-white background */
+  color: #3A4A3A;
+  /* Dark green for primary text */
+  min-height: 350px;
+  /* Adjusted min-height */
+  overflow: visible;
+  animation: fadeIn 0.5s ease-out;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  /* Added margin */
+  color: #2E8B57;
+  /* Sea Green for headings */
+  text-align: center;
+  /* Center heading */
+  font-size: 20px;
+  /* Slightly larger */
+  animation: fadeInUp 0.6s ease-out 0.2s backwards;
+  /* backwards fills animation before it starts */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Increased gap */
+  margin-bottom: 20px;
+  /* Increased margin */
+  animation: fadeInUp 0.6s ease-out 0.4s backwards;
+}
+
+input[type="text"],
+.custom-time {
+  /* Apply to both text and our custom time inputs */
+  padding: 8px 10px;
+  /* Increased padding */
+  border: 1px solid #A0A0A0;
+  /* Light brown/grey border */
+  border-radius: 5px;
+  /* Slightly more rounded */
+  background-color: #FFFFFF;
+  /* White background for inputs */
+  color: #3A4A3A;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+.custom-time:focus {
+  border-color: #556B2F;
+  /* Dark Olive Green on focus */
+  box-shadow: 0 0 0 2px rgba(85, 107, 47, 0.2);
+  /* Subtle focus ring */
+  outline: none;
+}
+
+button[type="submit"] {
+  background-color: #556B2F;
+  /* Dark Olive Green for button */
+  color: #FFFFFF;
+  /* White text on button */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  /* Increased padding */
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  /* Slightly larger font */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #6B8E23;
+  /* Lighter Olive Drab on hover */
+  transform: translateY(-1px);
+  /* Slight lift on hover */
+}
+
+#rulesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  /* White background for rule items */
+  border: 1px solid #D2B48C;
+  /* Tan border for rule items */
+  border-radius: 5px;
+  padding: 10px 12px;
+  /* Increased padding */
+  margin-bottom: 8px;
+  /* Increased margin */
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeInUp 0.5s ease-out backwards;
+  /* Stagger will be handled by JS if needed, for now, general appear */
+}
+
+.rule-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rule-url {
+  font-weight: bold;
+  color: #4A5D23;
+  /* Olive Drab for URL text */
+  margin-right: 10px;
+}
+
+.rule-time {
+  color: #8F7960;
+  /* Light brown/grey for time text */
+  font-size: 13px;
+}
+
+.custom-time-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Increased gap */
+  margin-bottom: 10px;
+  /* Increased margin */
+}
+
+.custom-time-container label {
+  display: block;
+  margin-bottom: 5px;
+  /* Increased margin */
+  font-weight: bold;
+  color: #4A5D23;
+  /* Olive Drab for labels */
+  font-size: 14px;
+  /* Consistent font size */
+}
+
+.custom-time-row {
+  display: flex;
+  align-items: center;
+  /* Vertically align items in row (colon and inputs) */
+  gap: 5px;
+}
+
+/* Styling for the colon separator if it were a span, for number inputs it's just text node */
+.custom-time-row span.time-separator {
+  color: #3A4A3A;
+  font-weight: bold;
+}
+
+.custom-time {
+  /* padding, border, etc. already defined above with input[type="text"] */
+  width: 60px;
+  /* Fixed width for HH/MM inputs */
+  text-align: center;
+}
+
+/* Hide number input spinners for a cleaner look (optional) */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  /* Firefox */
+  appearance: textfield;
+  /* Standard property */
+}

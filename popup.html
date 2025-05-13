@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Extension Active</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <h2>Bloqueur d'URLs</h2>
+  <form id="ruleForm">
+    <input type="text" id="url" placeholder="Ex: youtube.com" required />
+    <div class="custom-time-container">
+      <label for="start-hour">Start:</label>
+      <div class="custom-time-row">
+        <input type="number" class="custom-time" id="start-hour" min="0" max="23" placeholder="HH" required />:
+        <input type="number" class="custom-time" id="start-min" min="0" max="59" step="1" placeholder="MM" required />
+      </div>
+      <label for="end-hour">End:</label>
+      <div class="custom-time-row">
+        <input type="number" class="custom-time" id="end-hour" min="0" max="23" placeholder="HH" required />:
+        <input type="number" class="custom-time" id="end-min" min="0" max="59" step="1" placeholder="MM" required />
+      </div>
+    </div>
+    <button type="submit">Ajouter</button>
+  </form>
+  <ul id="rulesList"></ul>
+  <script src="popup.js"></script>
+</body>
+
+</html>
