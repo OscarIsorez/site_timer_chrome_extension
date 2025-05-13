@@ -91,21 +91,47 @@ button[type="submit"] {
   color: #FFFFFF;
   /* White text on button */
   border: none;
-  border-radius: 5px;
-  padding: 10px 0;
-  /* Increased padding */
+  border-radius: 8px;
+  /* Slightly more rounded */
+  padding: 12px 20px;
+  /* Increased padding for a more substantial button */
   cursor: pointer;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 16px;
   /* Slightly larger font */
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  letter-spacing: 0.5px;
+  /* Add some letter spacing */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, letter-spacing 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  /* Base shadow */
+  /* position: relative; */
+  /* Not needed for current effects but good for future pseudo-elements */
+  /* overflow: hidden; */
+  /* Not needed for current effects */
 }
 
 button[type="submit"]:hover {
   background-color: #6B8E23;
   /* Lighter Olive Drab on hover */
-  transform: translateY(-1px);
-  /* Slight lift on hover */
+  transform: translateY(-2px) scale(1.03);
+  /* More pronounced lift and slight scale */
+  box-shadow: 0 5px 12px rgba(85, 107, 47, 0.3);
+  /* Softer, larger shadow, using button color */
+  letter-spacing: 1px;
+  /* Increase letter spacing on hover */
+}
+
+button[type="submit"]:active {
+  background-color: #4A5D23;
+  /* Darker, more saturated green for press */
+  transform: translateY(0px) scale(0.98);
+  /* Simulate press down */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* Reduced shadow as it's pressed */
+  letter-spacing: 0.3px;
+  /* Slightly tighter letter spacing on press */
+  transition-duration: 0.1s;
+  /* Make the press feel quicker */
 }
 
 #rulesList {
