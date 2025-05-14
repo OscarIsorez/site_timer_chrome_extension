@@ -5,7 +5,8 @@
   "description": "Bloque des sites web selon des plages horaires.",
   "permissions": [
     "storage",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "alarms"
   ],
   "host_permissions": [
     "<all_urls>"
