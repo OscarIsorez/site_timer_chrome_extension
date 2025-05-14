@@ -80,6 +80,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // Helper function to check if the current time is within the rule's time range
+    function isTimeWithinRange(startTimeStr, endTimeStr) {
+        const now = new Date();
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+
+        const [startHour, startMinute] = startTimeStr.split(':').map(Number);
+        const [endHour, endMinute] = endTimeStr.split(':').map(Number);
+
+        const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+        const startTimeInMinutes = startHour * 60 + startMinute;
+        const endTimeInMinutes = endHour * 60 + endMinute;
+
+        if (startTimeInMinutes <= endTimeInMinutes) {
+            // Normal case: 09:00 - 17:00
+            return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes;
+        } else {
+            // Overnight case: 22:00 - 02:00
+            return currentTimeInMinutes >= startTimeInMinutes || currentTimeInMinutes < endTimeInMinutes;
+        }
+    }
+
     async function displayRules() {
         rulesList.innerHTML = ''; // Clear existing rules
         try {
@@ -88,6 +110,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             rules.forEach(rule => {
                 const li = document.createElement('li');
                 li.className = 'rule-item'; // Assuming you have styles for .rule-item
+
+                // Check if the rule is currently active
+                if (isTimeWithinRange(rule.start, rule.end)) {
+                    li.classList.add('active-rule');
+                }
 
                 const urlSpan = document.createElement('span');
                 urlSpan.className = 'rule-url';

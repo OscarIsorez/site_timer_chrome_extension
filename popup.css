@@ -282,3 +282,18 @@ input[type=number] {
   appearance: textfield;
   /* Standard property */
 }
+
+/* Styles for active rules */
+.rule-item.active-rule {
+  background-color: #E6FFE6;
+  /* Light green background */
+  border-left: 5px solid #2E8B57;
+  /* Sea Green left border */
+  padding-left: 10px;
+  /* Adjust padding to account for border */
+}
+
+.rule-item.active-rule .rule-url {
+  font-weight: bold;
+  /* Make URL bold for active rules */
+}
